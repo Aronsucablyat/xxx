@@ -1,0 +1,65 @@
+name: BioQuaderno
+options:
+  bundleIdPrefix: com.brahma
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "1.5"
+    CURRENT_PROJECT_VERSION: "5"
+    SWIFT_VERSION: "5.0"
+    # Necessario perché lo script di build richiama Gradle fuori dalla sandbox
+    ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+targets:
+  BioQuaderno:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: BioQuaderno
+    settings:
+      base:
+        PRODUCT_NAME: BioQuaderno
+        PRODUCT_BUNDLE_IDENTIFIER: com.brahma.bioquaderno
+        GENERATE_INFOPLIST_FILE: "NO"
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - $(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+        OTHER_LDFLAGS:
+          - $(inherited)
+          - -framework
+          - ComposeApp
+    info:
+      path: BioQuaderno/Info.plist
+      properties:
+        CFBundleDisplayName: BioQuaderno
+        CFBundleShortVersionString: "1.5"
+        CFBundleVersion: "5"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        ITSAppUsesNonExemptEncryption: false
+    preBuildScripts:
+      - name: Compile Kotlin Framework
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+schemes:
+  BioQuaderno:
+    build:
+      targets:
+        BioQuaderno: all
+    run:
+      config: Debug
+    archive:
+      config: Release
